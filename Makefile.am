@@ -11,6 +11,10 @@ ACLOCAL_AMFLAGS = -I m4
 
 bin_PROGRAMS = stagehand
 
-stagehand_SOURCES  = $(srcdir)/src/main.cpp $(srcdir)/src/bot_config.cpp $(srcdir)/src/commands/shutdown.cpp
+stagehand_SOURCES  = $(srcdir)/src/main.cpp $(srcdir)/src/bot_config.cpp \
+	$(srcdir)/src/commands/shutdown.cpp $(srcdir)/include/bot_config.hpp \
+	$(srcdir)/include/commands/command_list.hpp \
+	$(srcdir)/include/commands/base.hpp
+
 stagehand_LDADD    = @DPP_LIBS@
 stagehand_CXXFLAGS = @DPP_CFLAGS@ @TOMLPLUSPLUS_CFLAGS@ -std=c++20 -I$(srcdir)/include
