@@ -61,8 +61,7 @@ namespace stagehand {
          * */
         virtual void execute(const std::string& cmd_name,
             const dpp::parameter_list_t& params,
-            dpp::command_source src,
-            dpp::commandhandler handler)
+            dpp::command_source src)
             = 0;
     };
 };
