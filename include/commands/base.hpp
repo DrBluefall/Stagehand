@@ -44,20 +44,6 @@ namespace stagehand {
 
         /*
          * Execute the command.
-         *
-         * Note that this should be registered like so:
-         *
-         * ```cpp
-         * cmd_handler.add_command(
-         *     &command.name,
-         *     &command.parameter_list,
-         *     [&cmd_handler](const std::string& cmd_name,
-         *                    const dpp::parameter_list_t& params,
-         *                    dpp::command_source src) {
-         *         command.execute(cmd_name, params, src, cmd_handler);
-         *     }
-         * );
-         * ```
          * */
         virtual void execute(const std::string& cmd_name,
             const dpp::parameter_list_t& params,
