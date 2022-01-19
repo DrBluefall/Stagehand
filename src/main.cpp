@@ -31,9 +31,6 @@ using stagehand::utils::TypeMap;
 using namespace std::chrono_literals;
 namespace cmds = stagehand::commands;
 
-// template<typename Cmd,
-//     std::enable_if_t<std::is_base_of_v<stagehand::Command, Cmd> && std::is_default_constructible_v<Cmd>,
-//         bool> = true>
 template<typename Cmd>
 requires std::is_base_of_v<cmds::Command, Cmd>
 static void register_command(dpp::cluster& bot, std::unordered_map<std::string, cmds::CommandFunction>& cmdmap) {
