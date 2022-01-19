@@ -20,15 +20,12 @@
 
 namespace stagehand::commands {
 
-    class ShutdownCommand : public stagehand::Command {
+    class ShutdownCommand : public stagehand::commands::Command {
       public:
-        const std::string name { "shutdown" };
-        const std::string desc { "Exit the bot's process." };
-        const std::vector<dpp::command_permission> permissions {};
-        void execute(const std::string& cmd_name,
-            const dpp::parameter_list_t& params,
-            dpp::command_source src);
-
+        static inline std::string name { "shutdown" };
+        static inline std::string desc { "Exit the bot's process." };
+        static inline std::vector<dpp::command_permission> permissions {};
+        static void execute(const dpp::interaction_create_t& event, const std::shared_ptr<stagehand::utils::TypeMap> map);
     };
 
 };
