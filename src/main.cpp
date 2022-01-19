@@ -52,7 +52,7 @@ static void register_command(dpp::cluster& bot, std::unordered_map<std::string, 
 int main() {
     std::cout << "Initializing " PACKAGE_NAME " ver. " PACKAGE_VERSION "..." << std::endl;
 
-    stagehand::config config("bot.toml");
+    stagehand::Config config("bot.toml");
 
     dpp::cluster bot(config.token());
 
@@ -76,6 +76,10 @@ int main() {
             dpp::command_interaction cmd_data = std::get<dpp::command_interaction>(event.command.data);
             command_map.at(cmd_data.name)(event, typemap);
         }
+    });
+
+    bot.on_guild_member_add([&bot](const dpp::guild_member_add_t& event){
+
     });
 
     bot.start();
