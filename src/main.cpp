@@ -33,18 +33,22 @@ namespace cmds = stagehand::commands;
 
 template<typename Cmd>
 requires std::is_base_of_v<cmds::Command, Cmd>
-static void register_command(dpp::cluster& bot, std::unordered_map<std::string, cmds::CommandFunction>& cmdmap) {
-    bot.on_ready([&bot](const dpp::ready_t& event) {
+static void register_command(dpp::cluster& bot,
+    std::unordered_map<std::string, cmds::CommandFunction>& cmdmap,
+    stagehand::Config& config) {
+
+    bot.on_ready([&bot, &config](const dpp::ready_t& event) {
         dpp::slashcommand command;
-        command.set_name(Cmd::name)
-            .set_description(Cmd::desc);
-        for (auto i : Cmd::options) {
-            command.add_option(i);
-        }
-        for (auto i : Cmd::permissions) {
-            command.add_permission(i);
-        }
-        bot.global_command_create(command);
+        command.set_name(Cmd::name).set_description(Cmd::desc);
+        for (auto i : Cmd::options) { command.add_option(i); }
+        for (auto i : Cmd::permissions(config)) { command.add_permission(i); }
+        bot.guild_command_create(command, config.guild_id());
+
+#ifdef STAGEHAND_DEBUG_BUILD
+
+        std::cout << "Command '" << Cmd::name << "' registered." << std::endl;
+
+#endif // STAGEHAND_DEBUG_BUILD
     });
     cmdmap[Cmd::name] = &Cmd::execute;
 }
@@ -64,21 +68,32 @@ int main() {
 
     std::unordered_map<std::string, cmds::CommandFunction> command_map;
 
-    register_command<cmds::ShutdownCommand>(bot, command_map);
-
     bot.on_ready([&bot, &config](const dpp::ready_t& event) {
+        auto guild_id(config.guild_id());
+        bot.guild_commands_get(guild_id, [&bot, guild_id](const dpp::confirmation_callback_t& result) {
+            if (result.is_error())
+                return;
+
+            auto commands(std::get<dpp::slashcommand_map>(result.value));
+
+            for (const auto& [k, _] : commands) { bot.guild_command_delete(k, guild_id); }
+        });
+
         std::cout << "Logged in as " << bot.me.username << "#" << std::setfill('0') << std::setw(4)
                   << bot.me.discriminator << "." << std::endl;
     });
 
-    bot.on_interaction_create([&command_map, typemap](const dpp::interaction_create_t& event){
+    // Command registration must go *after* initial on-ready declaration
+    register_command<cmds::ShutdownCommand>(bot, command_map, config);
+
+    bot.on_interaction_create([&command_map, typemap](const dpp::interaction_create_t& event) {
         if (event.command.type == dpp::it_application_command) {
             dpp::command_interaction cmd_data = std::get<dpp::command_interaction>(event.command.data);
             command_map.at(cmd_data.name)(event, typemap);
         }
     });
 
-    bot.on_guild_member_add([&bot](const dpp::guild_member_add_t& event){
+    bot.on_guild_member_add([&bot](const dpp::guild_member_add_t& event) {
 
     });
 

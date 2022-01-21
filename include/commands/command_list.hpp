@@ -24,7 +24,9 @@ namespace stagehand::commands {
       public:
         static inline std::string name { "shutdown" };
         static inline std::string desc { "Exit the bot's process." };
-        static inline std::vector<dpp::command_permission> permissions {};
+        static inline std::vector<dpp::command_permission> permissions(stagehand::Config& config) {
+            return { dpp::command_permission({config.theatermaster_role_id(), dpp::cpt_role, true}) };
+        }
         static void execute(const dpp::interaction_create_t& event, const std::shared_ptr<stagehand::utils::TypeMap> map);
     };
 

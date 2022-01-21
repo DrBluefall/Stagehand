@@ -20,8 +20,9 @@
 #include <dpp/dpp.h>
 #include <memory>
 #include <string>
-#include <utils/typemap.hpp>
 #include <vector>
+#include <bot_config.hpp>
+#include <utils/typemap.hpp>
 
 namespace stagehand::commands {
 
@@ -46,7 +47,7 @@ namespace stagehand::commands {
         /*
          * Required permissions for the command
          * */
-        static inline std::vector<dpp::command_permission> permissions {};
+        static inline std::vector<dpp::command_permission> permissions(stagehand::Config& config);
 
         /*
          * Execute the command.
